@@ -1,19 +1,19 @@
 FROM astral/uv:python3.13-alpine
 
+ENV PYTHONUNBUFFERED=1
+
 RUN apk add --no-cache \
     ffmpeg \
-    dcron \
     sqlite \
     sqlite-libs
 
 WORKDIR /app
 
-COPY main.py /app/main.py
-RUN chmod +x /app/main.py
-
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+COPY --chmod=0755 main.py entrypoint.sh healthcheck.sh /app/
 
 RUN mkdir -p /data/db /data/media /data/logs
+
+HEALTHCHECK --interval=1h --timeout=30s --start-period=5m --retries=1 \
+  CMD /app/healthcheck.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
