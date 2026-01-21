@@ -19,7 +19,7 @@ This tool scans media libraries for corrupted video files using `ffprobe` (fast)
 - Validates files in parallel
 - Stores results in a SQLite database
 - Logs corrupted files and errors
-- Runs automatically on a cron schedule
+- Triggers healthcheck failure on error
 
 ## Usage
 
@@ -98,7 +98,3 @@ The following paths should be persisted:
 
 - [x] Docker
 - [x] Media files readable by the container
-
-## License
-
-MIT License
