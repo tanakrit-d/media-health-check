@@ -117,7 +117,7 @@ jobs:
             if [ ! -z "$tag" ]; then
               echo "Verifying signature for $tag"
               cosign verify \
-                --certificate-identity-regexp "^https://github.com/${{ github.repository }}/.github/workflows/docker-publish.yml@refs/tags/v.*$" \
+                --certificate-identity-regexp "^https://github.com/${{ github.repository }}/.github/workflows/docker-publish.yml@refs/(tags/v.*|heads/main)$" \
                 --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
                 "$tag@${DIGEST}"
             fi
