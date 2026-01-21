@@ -1,36 +1,28 @@
 #!/bin/sh
 set -e
 
-case "$1" in
-/* | -* | --*)
-	exec /app/main.py "$@"
-	;;
-esac
+SCAN_INTERVAL_HOURS=${SCAN_INTERVAL_HOURS:-24}
+SCAN_INTERVAL=$((SCAN_INTERVAL_HOURS * 3600))
 
-echo "Setting up cron job with schedule: $CRON_SCHEDULE"
-echo "Scanning directories: $SCAN_DIRECTORIES"
+echo "Scan interval: ${SCAN_INTERVAL_HOURS} hours (${SCAN_INTERVAL} seconds)"
+echo "Scan directories: $SCAN_DIRECTORIES"
 echo "Validator options: $VALIDATOR_OPTIONS"
-echo "Output format: $OUTPUT_FORMAT"
 echo "Database path: $DB_PATH"
 
 mkdir -p /data/logs
 
-[ "$OUTPUT_FORMAT" = "json" ] && JSON_FLAG="--json" || JSON_FLAG=""
+run_scan() {
+    TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
+    LOG_FILE="/data/logs/validator-${TIMESTAMP}.log"
 
-CRON_COMMAND="/app/main.py ${VALIDATOR_OPTIONS} --db-path ${DB_PATH} ${JSON_FLAG} ${SCAN_DIRECTORIES} >> /data/logs/validator-\$(date +\%Y-\%m-\%d).log 2>&1"
+    echo "Running scan at $(date) → logging to $LOG_FILE"
+    /app/main.py $VALIDATOR_OPTIONS --db-path $DB_PATH --json $SCAN_DIRECTORIES 2>&1 | tee "$LOG_FILE"
+}
 
-echo "${CRON_SCHEDULE} ${CRON_COMMAND}" >/etc/cron.d/video-validator
-chmod 0644 /etc/cron.d/video-validator
-crontab /etc/cron.d/video-validator
+run_scan
 
-echo "Cron job installed:"
-crontab -l
-
-echo ""
-echo "Running initial scan..."
-/app/main.py ${VALIDATOR_OPTIONS} --db-path ${DB_PATH} ${JSON_FLAG} ${SCAN_DIRECTORIES} |
-	tee /data/logs/validator-$(date +%Y-%m-%d)-startup.log
-
-echo ""
-echo "Starting cron daemon..."
-exec crond -f -l 8
+while true; do
+    echo "Sleeping for $SCAN_INTERVAL seconds before next scan..."
+    sleep "$SCAN_INTERVAL"
+    run_scan
+done

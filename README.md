@@ -36,11 +36,10 @@ services:
     container_name: media-health-check
 
     environment:
-      CRON_SCHEDULE: "0 7 * * *"
+      SCAN_INTERVAL_HOURS: "24"
       SCAN_DIRECTORIES: "/data/media/tv /data/media/movies"
       VALIDATOR_OPTIONS: "--verbose --prune"
       DB_PATH: "/data/db/scan.db"
-      OUTPUT_FORMAT: "json"
 
     volumes:
       - /mnt/user/data/media:/data/media:ro
@@ -54,11 +53,10 @@ services:
 
 | Variable | Description |
 | ----- | ----- |
-| CRON_SCHEDULE | Cron schedule (e.g. `0 7 * * *`) |
+| SCAN_INTERVAL_HOURS | Periodic schedule in hours (e.g. 24) |
 | SCAN_DIRECTORIES | Space-separated list of directories to scan |
 | VALIDATOR_OPTIONS | Additional CLI flags (e.g. `--deep` `--prune`) |
 | DB_PATH | Path to SQLite database |
-| OUTPUT_FORMAT | json or human-readable output |
 
 > [!NOTE]  
 > Paths and options must not contain newlines. Quoting inside cron is limited.
