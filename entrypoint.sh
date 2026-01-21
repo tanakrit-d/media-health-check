@@ -33,4 +33,4 @@ echo "Running initial scan..."
 
 echo ""
 echo "Starting cron daemon..."
-exec crond -f
+exec crond -f -l 8
