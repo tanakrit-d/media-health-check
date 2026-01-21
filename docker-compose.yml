@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  media-health-check:
+    image: ghcr.io/tanakrit-d/media-health-check:latest
+    container_name: media-health-check
+    
+    environment:
+      CRON_SCHEDULE: "0 7 * * *"
+      SCAN_DIRECTORIES: "/data/media/tv /data/media/movies /data/media/anime/series /data/media/anime/movies"
+      VALIDATOR_OPTIONS: "--verbose --prune"
+      DB_PATH: "/data/db/scan.db"
+      OUTPUT_FORMAT: "json"
+      
+    volumes:
+      - /mnt/user/data/media:/data/media:ro
+      - /mnt/user/appdata/media-health-check/db:/data/db
+      - /mnt/user/appdata/media-health-check/logs:/data/logs
+    
+    restart: unless-stopped
