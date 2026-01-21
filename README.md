@@ -2,7 +2,7 @@
 
 A lightweight, containerised video file integrity validator.
 
-This tool scans media libraries for corrupted video files using `ffprobe` (fast) or `ffmpeg` (deep), stores scan results in SQLite, and runs automatically on a cron schedule.  
+This tool scans media libraries for corrupted video files using `ffprobe` (fast) or `ffmpeg` (deep), stores scan results in SQLite, and runs automatically on a schedule.  
 
 ## Features
 
@@ -11,8 +11,6 @@ This tool scans media libraries for corrupted video files using `ffprobe` (fast)
 - Parallel scanning with configurable worker count
 - Persistent SQLite database with incremental rescans
 - Automatic pruning of deleted files
-- JSON or human-readable output
-- Cron-based scheduling inside the container
 
 ## Behaviour
 
@@ -28,8 +26,7 @@ This tool scans media libraries for corrupted video files using `ffprobe` (fast)
 Example `docker-compose.yml`
 
 ```yaml
-version: '3.8'
-
+---
 services:
   media-health-check:
     image: ghcr.io/tanakrit-d/media-health-check:latest
@@ -99,8 +96,8 @@ The following paths should be persisted:
 
 ## Requirements
 
-- [ ] Docker
-- [ ] Media files readable by the container
+- [x] Docker
+- [x] Media files readable by the container
 
 ## License
 
