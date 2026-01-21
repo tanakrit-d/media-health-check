@@ -90,7 +90,7 @@ class VideoValidator:
                 video_files.extend(path.rglob(f"*{ext}"))
                 video_files.extend(path.rglob(f"*{ext.upper()}"))
 
-        return sorted(list(set(video_files)))
+        return sorted(set(video_files))
 
     def _get_file_info(self, filepath: Path) -> Tuple[float, int]:
         stat = filepath.stat()
@@ -264,7 +264,7 @@ class VideoValidator:
                     # Simple progress indicator
                     if not self.quiet and i % 5 == 0:
                         sys.stderr.write(
-                            f"\rProgress: {i + 1}/{len(files_to_scan)} scanned"
+                            f"\rProgress: {i + 1}/{len(files_to_scan)} scanned\n"
                         )
 
             except KeyboardInterrupt:
