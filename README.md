@@ -56,7 +56,7 @@ services:
 | DB_PATH | Path to SQLite database |
 
 > [!NOTE]  
-> Paths and options must not contain newlines. Quoting inside cron is limited.
+> Paths and options must not contain newlines.
 
 ## Manual Execution
 
@@ -98,3 +98,29 @@ The following paths should be persisted:
 
 - [x] Docker
 - [x] Media files readable by the container
+
+## Example Run
+
+```console
+Scan interval: 24 hours (86400 seconds)
+Scan directories: /data/media/tv /data/media/movies /data/media/anime/series /data/media/anime/movies
+Validator options: --verbose --prune
+Database path: /data/db/scan.db
+Running scan at Wed Jan 21 03:39:53 UTC 2026 → logging to /data/logs/validator-2026-01-21_03-39-53.log
+Finding video files...
+Found 14511 video files. Checking status...
+Skipping 14511 up-to-date files. Scanning 0 files...
+
+{
+  "summary": {
+    "total_found": 14511,
+    "scanned": 0,
+    "skipped": 14511,
+    "corrupted": 0,
+    "duration": 9.77
+  },
+  "corrupted_files": [],
+  "errors": []
+}
+Sleeping for 86400 seconds before next scan...
+```
