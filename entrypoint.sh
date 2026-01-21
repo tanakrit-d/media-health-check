@@ -2,9 +2,9 @@
 set -e
 
 case "$1" in
-  /*|-*|--*)
-    exec /app/main.py "$@"
-    ;;
+/* | -* | --*)
+	exec /app/main.py "$@"
+	;;
 esac
 
 echo "Setting up cron job with schedule: $CRON_SCHEDULE"
@@ -15,9 +15,11 @@ echo "Database path: $DB_PATH"
 
 mkdir -p /data/logs
 
-CRON_COMMAND="/app/main.py ${VALIDATOR_OPTIONS} --db-path ${DB_PATH} --output ${OUTPUT_FORMAT} ${SCAN_DIRECTORIES} >> /data/logs/validator-\$(date +\%Y-\%m-\%d).log 2>&1"
+[ "$OUTPUT_FORMAT" = "json" ] && JSON_FLAG="--json" || JSON_FLAG=""
 
-echo "${CRON_SCHEDULE} ${CRON_COMMAND}" > /etc/cron.d/video-validator
+CRON_COMMAND="/app/main.py ${VALIDATOR_OPTIONS} --db-path ${DB_PATH} ${JSON_FLAG} ${SCAN_DIRECTORIES} >> /data/logs/validator-\$(date +\%Y-\%m-\%d).log 2>&1"
+
+echo "${CRON_SCHEDULE} ${CRON_COMMAND}" >/etc/cron.d/video-validator
 chmod 0644 /etc/cron.d/video-validator
 crontab /etc/cron.d/video-validator
 
@@ -26,8 +28,8 @@ crontab -l
 
 echo ""
 echo "Running initial scan..."
-/app/main.py ${VALIDATOR_OPTIONS} --db-path ${DB_PATH} --output ${OUTPUT_FORMAT} ${SCAN_DIRECTORIES} \
-  | tee /data/logs/validator-$(date +%Y-%m-%d)-startup.log
+/app/main.py ${VALIDATOR_OPTIONS} --db-path ${DB_PATH} ${JSON_FLAG} ${SCAN_DIRECTORIES} |
+	tee /data/logs/validator-$(date +%Y-%m-%d)-startup.log
 
 echo ""
 echo "Starting cron daemon..."
