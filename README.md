@@ -102,6 +102,25 @@ The following paths should be persisted:
 ## Example Run
 
 ```console
+Finding video files...
+Found 14511 video files. Checking status...
+Skipping 71 up-to-date files. Scanning 14440 files...
+
+Progress: 1/14440 scanned
+✓ Valid: 86 - Eighty Six (2021) - S01E05 - 005 - Im With You [Bluray-1080p v3][10bit][x265][EAC3 2.0][EN+JA]-iVy.mkv
+✓ Valid: 86 - Eighty Six (2021) - S01E08 - 008 - Lets Go [Bluray-1080p v3][10bit][x265][EAC3 2.0][EN+JA]-iVy.mkv
+✓ Valid: 86 - Eighty Six (2021) - S01E15 - 016 - Welcome Back [Bluray-1080p v3][10bit][x265][EAC3 2.0][EN+JA]-iVy.mkv
+✓ Valid: 86 - Eighty Six (2021) - S01E11 - 011 - Here We Go [Bluray-1080p v3][10bit][x265][EAC3 2.0][EN+JA]-iVy.mkv
+✓ Valid: 86 - Eighty Six (2021) - S01E07 - 007 - Will You Remember Me [Bluray-1080p v3][10bit][x265][EAC3 2.0][EN+JA]-iVy.mkv
+
+Progress: 6/14440 scanned
+✓ Valid: 86 - Eighty Six (2021) - S01E04 - 004 - Real Name [Bluray-1080p v3][10bit][x265][EAC3 2.0][EN+JA]-iVy.mkv
+✓ Valid: 86 - Eighty Six (2021) - S01E01 - 001 - Undertaker [Bluray-1080p v3][10bit][x265][EAC3 2.0][EN+JA]-iVy.mkv
+✓ Valid: 86 - Eighty Six (2021) - S01E10 - 010 - Thank You [Bluray-1080p v3][10bit][x265][EAC3 2.0][EN+JA]-iVy.mkv
+✓ Valid: 86 - Eighty Six (2021) - S01E09 - 009 - Goodbye [Bluray-1080p v3][10bit][x265][EAC3 2.0][EN+JA]-iVy.mkv
+```
+
+```console
 Scan interval: 24 hours (86400 seconds)
 Scan directories: /data/media/tv /data/media/movies /data/media/anime/series /data/media/anime/movies
 Validator options: --verbose --prune
