@@ -2,7 +2,6 @@
 """
 Video file integrity validator.
 Features: Parallel scanning, Batch DB commits, Deep Scan mode.
-Type-safe and performance optimized.
 """
 
 import argparse
@@ -52,8 +51,7 @@ class VideoValidator:
         """Initialize SQLite database with WAL mode for concurrency."""
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.conn = sqlite3.connect(str(self.db_path))
-        self.conn.row_factory = sqlite3.Row  # optional, makes rows dict-like
-
+        self.conn.row_factory = sqlite3.Row
         assert self.conn is not None
 
         self.conn.execute("PRAGMA journal_mode=WAL;")
@@ -62,7 +60,7 @@ class VideoValidator:
                 filepath TEXT PRIMARY KEY,
                 mtime REAL,
                 size INTEGER,
-                last_scanned TEXT,  -- store as ISO string
+                last_scanned TEXT,
                 is_corrupted BOOLEAN,
                 scan_type TEXT,
                 error_message TEXT
@@ -117,22 +115,18 @@ class VideoValidator:
         last_scan_type = row["scan_type"]
         last_scanned_str = row["last_scanned"]
 
-        # Convert last_scanned ISO string to datetime
         last_scanned = (
             datetime.fromisoformat(last_scanned_str) if last_scanned_str else None
         )
 
         current_mtime, current_size = self._get_file_info(filepath)
 
-        # If file changed, rescan
         if current_mtime != db_mtime or current_size != db_size:
             return True
 
-        # If it was corrupted, check again
         if was_corrupted:
             return True
 
-        # If we are doing a deep scan but last time was only a quick scan, rescan
         current_scan_type = "deep" if self.deep_scan else "quick"
         if current_scan_type == "deep" and last_scan_type != "deep":
             return True
@@ -150,7 +144,6 @@ class VideoValidator:
         try:
             if deep_scan:
                 # DEEP SCAN: Decodes the stream (slow, accurate)
-                # -f null - throws away the output, we just want to see if it errors
                 cmd = ["ffmpeg", "-v", "error", "-i", str(filepath), "-f", "null", "-"]
             else:
                 # QUICK SCAN: Checks container headers (fast)
@@ -231,6 +224,12 @@ class VideoValidator:
 
                     scanned_count += 1
 
+                    # Simple progress indicator
+                    if not self.quiet and i % 5 == 0:
+                        sys.stderr.write(
+                            f"\rProgress: {i + 1}/{len(files_to_scan)} scanned\n"
+                        )
+
                     # Prepare DB update
                     mtime, size = self._get_file_info(filepath)
                     pending_db_updates.append(
@@ -238,7 +237,7 @@ class VideoValidator:
                             str(filepath),
                             mtime,
                             size,
-                            datetime.now().isoformat(),  # <- convert datetime to string
+                            datetime.now().isoformat(),
                             not is_valid,
                             "deep" if self.deep_scan else "quick",
                             error_msg,
@@ -260,12 +259,6 @@ class VideoValidator:
                     if len(pending_db_updates) >= BATCH_SIZE:
                         self._batch_update_db(pending_db_updates)
                         pending_db_updates = []
-
-                    # Simple progress indicator
-                    if not self.quiet and i % 5 == 0:
-                        sys.stderr.write(
-                            f"\rProgress: {i + 1}/{len(files_to_scan)} scanned\n"
-                        )
 
             except KeyboardInterrupt:
                 self._log("\nScan interrupted by user. Saving progress...", "info")
@@ -296,7 +289,6 @@ class VideoValidator:
         """Efficient batch insert, storing datetime as ISO string."""
         assert self.conn is not None
 
-        # Convert datetime objects to ISO string before inserting
         converted_records = []
         for record in records:
             filepath, mtime, size, last_scanned, is_corrupted, scan_type, error_msg = (
@@ -349,7 +341,7 @@ class VideoValidator:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Video Validator v2.1",
+        description="Video Validator",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("directories", nargs="+", help="Directories to scan")
