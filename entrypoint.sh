@@ -12,11 +12,13 @@ echo "Database path: $DB_PATH"
 mkdir -p /data/logs
 
 run_scan() {
-    TIMESTAMP=$(date +%Y-%m-%d_%H-%M-%S)
-    LOG_FILE="/data/logs/validator-${TIMESTAMP}.log"
+	DATE=$(date +%Y-%m)
+    LOG_FILE="/data/logs/validator-${DATE}.log"
 
     echo "Running scan at $(date) → logging to $LOG_FILE"
-    /app/main.py $VALIDATOR_OPTIONS --db-path $DB_PATH --json $SCAN_DIRECTORIES 2>&1 | tee "$LOG_FILE"
+    echo "=== Scan started at $(date) ===" >> "$LOG_FILE"
+    /app/main.py $VALIDATOR_OPTIONS --db-path $DB_PATH --json $SCAN_DIRECTORIES 2>&1 | tee -a "$LOG_FILE"
+    echo "=== Scan ended at $(date) ===" >> "$LOG_FILE"
 }
 
 run_scan
