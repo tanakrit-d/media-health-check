@@ -24,7 +24,7 @@ run_scan() {
 run_scan
 
 while true; do
-    echo "Sleeping for $SCAN_INTERVAL seconds before next scan..."
+	echo "Sleeping for ${SCAN_INTERVAL_HOURS} hours before next scan..."
     sleep "$SCAN_INTERVAL"
     run_scan
 done
